@@ -1,0 +1,481 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Auth (Better Auth) — users, sessions, oauth accounts, verification tokens
+// ─────────────────────────────────────────────────────────────────────────
+
+enum PlatformRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  platformRole  PlatformRole @default(USER)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions      Session[]
+  accounts      Account[]
+  memberships   Membership[]
+  hostedEvents  Event[]        @relation("EventHost")
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verifications")
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Multi-tenant: organizations, membership/roles
+// ─────────────────────────────────────────────────────────────────────────
+
+enum OrgRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum PlanTier {
+  FREE
+  ESSENTIAL
+  PREMIUM
+  LUXE
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  logoUrl   String?
+  planTier  PlanTier @default(FREE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships   Membership[]
+  events        Event[]
+  subscription  Subscription?
+  vendors       Vendor[]
+
+  @@map("organizations")
+}
+
+model Membership {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  role           OrgRole  @default(MEMBER)
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@map("memberships")
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Events + Invitations
+// ─────────────────────────────────────────────────────────────────────────
+
+enum EventType {
+  WEDDING
+  BIRTHDAY
+  CONFERENCE
+  CORPORATE
+  GRADUATION
+  BABY_SHOWER
+  CHURCH
+  MEMORIAL
+  FESTIVAL
+  FUNDRAISER
+  NETWORKING
+  HOLIDAY_PARTY
+  COMMUNITY_EVENT
+  CUSTOM
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum EventVisibility {
+  PUBLIC
+  PRIVATE
+  PASSWORD_PROTECTED
+}
+
+model Event {
+  id             String          @id @default(cuid())
+  organizationId String?
+  hostId         String
+  type           EventType
+  status         EventStatus     @default(DRAFT)
+  visibility     EventVisibility @default(PRIVATE)
+  passwordHash   String?
+  slug           String          @unique
+  title          String
+  startAt        DateTime
+  endAt          DateTime?
+  timezone       String          @default("UTC")
+  venueName      String?
+  venueAddress   String?
+  venueLat       Float?
+  venueLng       Float?
+  coverImageUrl  String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  organization    Organization?    @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  host            User             @relation("EventHost", fields: [hostId], references: [id], onDelete: Cascade)
+  invitation      Invitation?
+  guests          Guest[]
+  guestGroups     GuestGroup[]
+  media           MediaAsset[]
+  analyticsEvents AnalyticsEvent[]
+  payments        Payment[]
+
+  @@index([hostId])
+  @@index([organizationId])
+  @@map("events")
+}
+
+enum TemplateCategory {
+  LUXURY
+  ROYAL
+  MINIMAL
+  MODERN
+  FLORAL
+  VINTAGE
+  GLASSMORPHISM
+  ELEGANT
+  TRADITIONAL
+  CORPORATE
+}
+
+model Template {
+  id           String           @id @default(cuid())
+  key          String           @unique
+  name         String
+  category     TemplateCategory
+  description  String
+  previewImage String
+  isPremium    Boolean          @default(false)
+  createdAt    DateTime         @default(now())
+
+  invitations Invitation[]
+
+  @@map("templates")
+}
+
+model Invitation {
+  id           String   @id @default(cuid())
+  eventId      String   @unique
+  templateId   String
+  theme        Json     @default("{}")
+  content      Json     @default("{}")
+  musicUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  template Template @relation(fields: [templateId], references: [id])
+
+  @@map("invitations")
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Guests + RSVP
+// ─────────────────────────────────────────────────────────────────────────
+
+enum GuestTag {
+  VIP
+  FAMILY
+  FRIEND
+  COWORKER
+  OTHER
+}
+
+enum InvitationDeliveryStatus {
+  NOT_SENT
+  SENT
+  OPENED
+  FAILED
+}
+
+model GuestGroup {
+  id      String @id @default(cuid())
+  eventId String
+  name    String
+
+  event  Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  guests Guest[]
+
+  @@map("guest_groups")
+}
+
+model Guest {
+  id                 String                    @id @default(cuid())
+  eventId            String
+  groupId            String?
+  fullName           String
+  email              String?
+  phone              String?
+  tag                GuestTag                  @default(OTHER)
+  maxPlusOnes        Int                       @default(0)
+  qrToken            String                    @unique @default(cuid())
+  invitationStatus   InvitationDeliveryStatus  @default(NOT_SENT)
+  invitationSentAt   DateTime?
+  invitationOpenedAt DateTime?
+  createdAt          DateTime                  @default(now())
+
+  event    Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  group    GuestGroup?   @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  rsvp     RsvpResponse?
+  checkIn  CheckIn?
+
+  @@index([eventId])
+  @@map("guests")
+}
+
+enum RsvpStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  MAYBE
+}
+
+model RsvpResponse {
+  id                  String     @id @default(cuid())
+  guestId             String     @unique
+  status              RsvpStatus @default(PENDING)
+  plusOneCount        Int        @default(0)
+  mealPreference      String?
+  dietaryRestrictions String?
+  needsTransportation Boolean    @default(false)
+  needsHotel          Boolean    @default(false)
+  customAnswers       Json       @default("{}")
+  message             String?
+  respondedAt         DateTime   @default(now())
+
+  guest Guest @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@map("rsvp_responses")
+}
+
+model CheckIn {
+  id         String   @id @default(cuid())
+  guestId    String   @unique
+  checkedInAt DateTime @default(now())
+  method     String   @default("QR")
+  note       String?
+
+  guest Guest @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@map("check_ins")
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Media
+// ─────────────────────────────────────────────────────────────────────────
+
+enum MediaType {
+  PHOTO
+  VIDEO
+}
+
+model MediaAsset {
+  id        String    @id @default(cuid())
+  eventId   String
+  type      MediaType
+  url       String
+  albumName String?
+  caption   String?
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@map("media_assets")
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Billing
+// ─────────────────────────────────────────────────────────────────────────
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  organizationId       String             @unique
+  planTier             PlanTier           @default(FREE)
+  status               SubscriptionStatus @default(ACTIVE)
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  eventId         String?
+  amountCents     Int
+  currency        String        @default("usd")
+  status          PaymentStatus @default(PENDING)
+  provider        String        @default("stripe")
+  providerRef     String?       @unique
+  createdAt       DateTime      @default(now())
+
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@map("payments")
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Analytics + audit
+// ─────────────────────────────────────────────────────────────────────────
+
+enum AnalyticsEventType {
+  VIEW
+  RSVP_SUBMITTED
+  QR_SCAN
+  SHARE_CLICK
+}
+
+model AnalyticsEvent {
+  id        String             @id @default(cuid())
+  eventId   String
+  type      AnalyticsEventType
+  source    String?
+  metadata  Json               @default("{}")
+  createdAt DateTime           @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId, type])
+  @@map("analytics_events")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Marketplace (schema only in Phase 1 — no UI yet)
+// ─────────────────────────────────────────────────────────────────────────
+
+enum VendorCategory {
+  PLANNER
+  PHOTOGRAPHER
+  VIDEOGRAPHER
+  FLORIST
+  HOTEL
+  VENUE
+  CATERER
+  DECORATOR
+  MUSICIAN
+}
+
+model Vendor {
+  id             String         @id @default(cuid())
+  organizationId String?
+  name           String
+  category       VendorCategory
+  description    String
+  websiteUrl     String?
+  contactEmail   String?
+  city           String?
+  createdAt      DateTime       @default(now())
+
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  @@map("vendors")
+}

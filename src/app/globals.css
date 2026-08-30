@@ -1,0 +1,258 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.75rem;
+
+  /* Luxury palette — light mode */
+  --background: oklch(0.98 0.012 85);       /* cream */
+  --foreground: oklch(0.19 0.01 60);        /* near-black ink */
+  --card: oklch(1 0 0);                     /* white */
+  --card-foreground: oklch(0.19 0.01 60);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.19 0.01 60);
+
+  --primary: oklch(0.63 0.11 78);           /* champagne gold */
+  --primary-foreground: oklch(0.15 0.01 60);
+  --secondary: oklch(0.73 0.075 18);        /* rose gold */
+  --secondary-foreground: oklch(0.15 0.01 60);
+  --accent: oklch(0.42 0.09 155);           /* emerald */
+  --accent-foreground: oklch(0.98 0.012 85);
+
+  --muted: oklch(0.95 0.012 80);
+  --muted-foreground: oklch(0.45 0.015 60);
+
+  --destructive: oklch(0.55 0.19 25);
+  --destructive-foreground: oklch(0.98 0.012 85);
+
+  --border: oklch(0.89 0.015 75);
+  --input: oklch(0.89 0.015 75);
+  --ring: oklch(0.63 0.11 78);
+
+  --champagne: oklch(0.63 0.11 78);
+  --rose-gold: oklch(0.73 0.075 18);
+  --emerald: oklch(0.42 0.09 155);
+  --luxury-black: oklch(0.16 0.005 60);
+  --cream: oklch(0.98 0.012 85);
+
+  --font-serif: var(--font-playfair);
+  --font-script: var(--font-script);
+  --font-sans: var(--font-sans-modern);
+
+  --chart-1: var(--champagne);
+  --chart-2: var(--rose-gold);
+  --chart-3: var(--emerald);
+  --chart-4: oklch(0.7 0.08 60);
+  --chart-5: oklch(0.5 0.02 60);
+}
+
+.dark {
+  --background: oklch(0.14 0.006 60);       /* black luxury */
+  --foreground: oklch(0.96 0.01 85);
+  --card: oklch(0.18 0.008 60);
+  --card-foreground: oklch(0.96 0.01 85);
+  --popover: oklch(0.18 0.008 60);
+  --popover-foreground: oklch(0.96 0.01 85);
+
+  --primary: oklch(0.75 0.1 80);
+  --primary-foreground: oklch(0.14 0.006 60);
+  --secondary: oklch(0.68 0.08 20);
+  --secondary-foreground: oklch(0.14 0.006 60);
+  --accent: oklch(0.55 0.1 155);
+  --accent-foreground: oklch(0.96 0.01 85);
+
+  --muted: oklch(0.24 0.008 60);
+  --muted-foreground: oklch(0.68 0.015 75);
+
+  --destructive: oklch(0.62 0.19 25);
+  --destructive-foreground: oklch(0.96 0.01 85);
+
+  --border: oklch(0.28 0.008 60);
+  --input: oklch(0.28 0.008 60);
+  --ring: oklch(0.75 0.1 80);
+
+  --champagne: oklch(0.75 0.1 80);
+  --rose-gold: oklch(0.68 0.08 20);
+  --emerald: oklch(0.55 0.1 155);
+  --luxury-black: oklch(0.1 0.004 60);
+  --cream: oklch(0.24 0.01 80);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-champagne: var(--champagne);
+  --color-rose-gold: var(--rose-gold);
+  --color-emerald: var(--emerald);
+  --color-luxury-black: var(--luxury-black);
+  --color-cream: var(--cream);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --font-serif: var(--font-serif);
+  --font-script: var(--font-script);
+  --font-sans: var(--font-sans);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --animate-fade-in: fade-in 0.6s ease-out both;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-shimmer: shimmer 2.5s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-sparkle: sparkle 1.8s ease-in-out infinite;
+  --animate-fall: fall linear infinite;
+  --animate-drift-up: drift-up linear infinite;
+  --animate-envelope-flap: envelope-flap 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 0% 0%;
+    }
+    to {
+      background-position: -200% 0%;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-14px) rotate(3deg);
+    }
+  }
+  @keyframes sparkle {
+    0%,
+    100% {
+      opacity: 0.2;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+  }
+  @keyframes fall {
+    0% {
+      transform: translateY(-8%) translateX(0) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(108vh) translateX(var(--drift, 40px)) rotate(var(--spin, 180deg));
+      opacity: 0;
+    }
+  }
+  @keyframes drift-up {
+    0% {
+      transform: translateY(10%) translateX(0) scale(0.8);
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-110vh) translateX(var(--drift, 20px)) scale(1.1);
+      opacity: 0;
+    }
+  }
+  @keyframes envelope-flap {
+    0% {
+      transform: rotateX(0deg);
+    }
+    100% {
+      transform: rotateX(180deg);
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-serif);
+  }
+  .font-script {
+    font-family: var(--font-script);
+  }
+
+  .glass {
+    background: color-mix(in oklch, var(--card) 55%, transparent);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(
+      110deg,
+      var(--champagne) 0%,
+      oklch(0.9 0.05 90) 45%,
+      var(--champagne) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}

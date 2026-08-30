@@ -1,0 +1,7 @@
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="modern-2" cx="35%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#ffffff"/><stop offset="60%" stop-color="#f4f1ea"/><stop offset="100%" stop-color="#cbb98f"/>
+    </radialGradient></defs>
+    <rect width="600" height="600" fill="url(#modern-2)"/>
+    <rect x="60" y="420" width="480" height="2" fill="#cbb98f" opacity="0.3"/>
+  </svg>

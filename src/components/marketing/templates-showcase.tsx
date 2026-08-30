@@ -21,26 +21,35 @@ export function TemplatesShowcase() {
 
       <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {TEMPLATE_DEFINITIONS.map((template) => (
-          <Link
+          <div
             key={template.key}
-            href={`/signup?template=${template.key}`}
             className="group overflow-hidden rounded-xl border border-border/60 bg-card transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-champagne/10"
           >
-            <div
-              className="aspect-[3/4] w-full"
-              style={{ background: template.swatch }}
-              aria-hidden
-            />
-            <div className="p-4">
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="font-display text-base font-semibold">{template.name}</h3>
-                <Badge variant="secondary" className="shrink-0 text-[10px]">
-                  {template.category}
-                </Badge>
+            <Link href={`/signup?template=${template.key}`} className="block">
+              <div
+                className="aspect-[3/4] w-full"
+                style={{ background: template.swatch }}
+                aria-hidden
+              />
+              <div className="p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="font-display text-base font-semibold">{template.name}</h3>
+                  <Badge variant="secondary" className="shrink-0 text-[10px]">
+                    {template.category}
+                  </Badge>
+                </div>
+                <p className="mt-1.5 text-sm text-muted-foreground">{template.description}</p>
               </div>
-              <p className="mt-1.5 text-sm text-muted-foreground">{template.description}</p>
-            </div>
-          </Link>
+            </Link>
+            <Link
+              href={`/invite/demo-${template.key}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block border-t border-border/60 px-4 py-2.5 text-center text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              View live demo
+            </Link>
+          </div>
         ))}
       </div>
 

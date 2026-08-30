@@ -44,13 +44,23 @@ export function TemplateGalleryCard({
           </Badge>
         </div>
         <p className="mt-1.5 text-sm text-muted-foreground">{template.description}</p>
-        <Link
-          href={`/signup?template=${template.key}`}
-          className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors group-hover:gap-2"
-        >
-          Use this template
-          <ArrowRight className="h-3.5 w-3.5 transition-all" />
-        </Link>
+        <div className="mt-4 flex items-center gap-4">
+          <Link
+            href={`/invite/demo-${template.key}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            View live demo
+          </Link>
+          <Link
+            href={`/signup?template=${template.key}`}
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors group-hover:gap-2"
+          >
+            Use this template
+            <ArrowRight className="h-3.5 w-3.5 transition-all" />
+          </Link>
+        </div>
       </div>
     </motion.div>
   );

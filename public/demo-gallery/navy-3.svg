@@ -1,0 +1,7 @@
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="navy-3" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#0a1428"/><stop offset="50%" stop-color="#16294a"/><stop offset="100%" stop-color="#6b86ad"/>
+    </linearGradient></defs>
+    <rect width="600" height="600" fill="url(#navy-3)"/>
+    <ellipse cx="300" cy="300" rx="220" ry="120" fill="#6b86ad" opacity="0.14"/>
+  </svg>

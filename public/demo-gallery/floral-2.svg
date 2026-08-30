@@ -1,0 +1,7 @@
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="floral-2" cx="35%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#fbeef0"/><stop offset="60%" stop-color="#f3c9cf"/><stop offset="100%" stop-color="#b76e79"/>
+    </radialGradient></defs>
+    <rect width="600" height="600" fill="url(#floral-2)"/>
+    <rect x="60" y="420" width="480" height="2" fill="#b76e79" opacity="0.3"/>
+  </svg>

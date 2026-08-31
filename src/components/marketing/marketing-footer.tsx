@@ -57,7 +57,7 @@ export function MarketingFooter() {
           ))}
         </div>
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-6 text-sm text-muted-foreground sm:flex-row">
-          <p>&copy; {new Date().getFullYear()} Olbos Event. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} OLBOS DESIGN. All rights reserved.</p>
           <p className="font-script text-lg text-champagne">Crafted for every celebration</p>
         </div>
       </div>

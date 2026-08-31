@@ -1,4 +1,6 @@
-# Olbos Event
+# OLBOS DESIGN
+
+**Create. Design. Celebrate.**
 
 A premium event management and digital invitation platform — weddings, birthdays,
 conferences, churches, graduations, and more. Built with Next.js 15, React 19,
@@ -10,6 +12,12 @@ management → QR check-in → analytics → billing → admin), not a mockup. E
 feature listed as "done" below is wired to a real database and, where
 applicable, real third-party services — see [What's not built yet](#whats-not-built-yet-roadmap)
 for what's intentionally deferred.
+
+This Phase 1 slice is the foundation for the much larger OLBOS DESIGN vision — a
+creator-marketplace-and-organization design ecosystem. See
+[OLBOS_DESIGN.md](./OLBOS_DESIGN.md) for the full product vision, a Phase 0
+technical audit of this codebase against that vision, and the proposed
+implementation plan.
 
 ## Tech stack
 

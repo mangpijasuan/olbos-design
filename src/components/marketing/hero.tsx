@@ -28,7 +28,7 @@ export function Hero() {
             className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-champagne/40 bg-champagne/10 px-4 py-1.5 text-xs font-medium tracking-wide text-champagne uppercase lg:mx-0"
           >
             <Sparkles className="h-3.5 w-3.5" />
-            Premium event management, reimagined
+            Create. Design. Celebrate.
           </motion.div>
 
           <motion.h1
@@ -47,9 +47,9 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg lg:mx-0"
           >
-            Weddings, birthdays, conferences, graduations, and everything in between — Olbos Event
-            gives you luxury digital invitations, effortless RSVPs, guest management, and QR
-            check-in in one elegant platform.
+            Weddings, birthdays, conferences, graduations, and everything in between — OLBOS
+            DESIGN gives you luxury digital invitations, effortless RSVPs, guest management, and
+            QR check-in in one elegant platform.
           </motion.p>
 
           <motion.div

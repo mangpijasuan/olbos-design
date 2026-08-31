@@ -4,7 +4,7 @@ import { TemplateGallery } from "@/components/marketing/template-gallery";
 export const metadata: Metadata = {
   title: "Templates",
   description:
-    "Browse Olbos Event's designer invitation templates with live animated background effects and full customization.",
+    "Browse OLBOS DESIGN's designer invitation templates with live animated background effects and full customization.",
 };
 
 export default function TemplatesPage() {

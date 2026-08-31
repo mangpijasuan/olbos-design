@@ -193,10 +193,10 @@ const DEMOS: DemoEvent[] = [
 async function main() {
   const host = await db.user.upsert({
     where: { email: DEMO_HOST_EMAIL },
-    update: {},
+    update: { name: "OLBOS DESIGN Demo" },
     create: {
       email: DEMO_HOST_EMAIL,
-      name: "Olbos Demo",
+      name: "OLBOS DESIGN Demo",
       emailVerified: true,
     },
   });

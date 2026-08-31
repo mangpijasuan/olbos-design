@@ -40,7 +40,7 @@ export function BillingPageContent() {
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold">Billing</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Manage your Olbos Event subscription.</p>
+      <p className="mt-1 text-sm text-muted-foreground">Manage your OLBOS DESIGN subscription.</p>
 
       <div className="mt-6 rounded-xl border border-border/60 bg-card p-5">
         {isLoading ? (

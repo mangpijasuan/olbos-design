@@ -23,11 +23,11 @@ const sansModern = Manrope({
 
 export const metadata: Metadata = {
   title: {
-    default: "Olbos Event — Premium Event Management & Digital Invitations",
-    template: "%s · Olbos Event",
+    default: "OLBOS DESIGN — Create. Design. Celebrate.",
+    template: "%s · OLBOS DESIGN",
   },
   description:
-    "Olbos Event is a premium event management and digital invitation platform for weddings, birthdays, conferences, churches, graduations, and more.",
+    "OLBOS DESIGN is a premium event and digital invitation platform for weddings, birthdays, conferences, churches, graduations, and more.",
 };
 
 export default function RootLayout({

@@ -14,7 +14,7 @@ export function Logo({ className }: { className?: string }) {
         O
       </span>
       <span className="tracking-wide">
-        Olbos <span className="text-gradient-gold">Event</span>
+        OLBOS <span className="text-gradient-gold">DESIGN</span>
       </span>
     </Link>
   );

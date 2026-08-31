@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CreateEventInput, UpdateEventInput } from "@/validations/event";
+import type { ThemeTokens } from "@/validations/theme";
 
 export interface EventTypeRef {
   id: string;
@@ -28,10 +29,12 @@ export interface EventDetail extends EventSummary {
   invitation: {
     id: string;
     templateId: string;
+    themeId: string;
     content: Record<string, unknown>;
     theme: Record<string, unknown>;
     musicUrl: string | null;
     template: { key: string; name: string; category: string };
+    selectedTheme: { key: string; name: string; category: string; tokens: ThemeTokens };
   } | null;
 }
 

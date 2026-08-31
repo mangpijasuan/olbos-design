@@ -15,7 +15,7 @@ async function loadEvent(slug: string) {
     where: { slug },
     include: {
       eventType: true,
-      invitation: { include: { template: true } },
+      invitation: { include: { template: true, selectedTheme: true } },
       media: { orderBy: { sortOrder: "asc" } },
     },
   });

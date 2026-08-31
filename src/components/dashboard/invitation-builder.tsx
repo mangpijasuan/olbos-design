@@ -15,6 +15,8 @@ import {
 import { TEMPLATE_DEFINITIONS } from "@/lib/templates";
 import { getTemplateComponent } from "@/components/invitation/template-registry";
 import { useUpdateInvitation } from "@/hooks/use-invitation";
+import { useThemes } from "@/hooks/use-themes";
+import { DEFAULT_THEME_TOKENS } from "@/validations/theme";
 import type { EventDetail } from "@/hooks/use-events";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,7 +62,9 @@ function withDefaults(content: Partial<InvitationContentInput> | undefined): Inv
 
 export function InvitationBuilder({ event }: { event: EventDetail }) {
   const updateInvitation = useUpdateInvitation(event.id);
+  const { data: themesData } = useThemes();
   const [templateKey, setTemplateKey] = useState(event.invitation?.template.key ?? "luxury");
+  const [themeKey, setThemeKey] = useState(event.invitation?.selectedTheme.key ?? "luxury-blush");
 
   const form = useForm<InvitationContentInput>({
     resolver: zodResolver(invitationContentSchema),
@@ -70,6 +74,7 @@ export function InvitationBuilder({ event }: { event: EventDetail }) {
   useEffect(() => {
     form.reset(withDefaults(event.invitation?.content as Partial<InvitationContentInput>));
     setTemplateKey(event.invitation?.template.key ?? "luxury");
+    setThemeKey(event.invitation?.selectedTheme.key ?? "luxury-blush");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event.id]);
 
@@ -80,10 +85,12 @@ export function InvitationBuilder({ event }: { event: EventDetail }) {
   const galleryUrls = form.watch("galleryUrls") ?? [];
 
   const PreviewComponent = getTemplateComponent(templateKey);
+  const selectedThemeOption = themesData?.themes.find((t) => t.key === themeKey);
+  const themeTokens = selectedThemeOption?.tokens ?? DEFAULT_THEME_TOKENS;
 
   async function onSubmit(values: InvitationContentInput) {
     try {
-      await updateInvitation.mutateAsync({ templateKey, content: values });
+      await updateInvitation.mutateAsync({ templateKey, themeKey, content: values });
       toast.success("Invitation saved");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not save invitation");
@@ -111,6 +118,33 @@ export function InvitationBuilder({ event }: { event: EventDetail }) {
                 <div className="aspect-video w-full" style={{ background: tpl.swatch }} />
                 <div className="p-2">
                   <p className="truncate text-xs font-medium">{tpl.name}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h3 className="font-display text-lg font-semibold">Theme</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Colors and typography — independent of your chosen template layout.
+          </p>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {(themesData?.themes ?? []).map((th) => (
+              <button
+                type="button"
+                key={th.key}
+                onClick={() => setThemeKey(th.key)}
+                className={cn(
+                  "overflow-hidden rounded-lg border-2 text-left transition-all",
+                  themeKey === th.key
+                    ? "border-primary ring-2 ring-primary/30"
+                    : "border-border/60 hover:border-border",
+                )}
+              >
+                <div className="aspect-video w-full" style={{ background: th.swatch }} />
+                <div className="p-2">
+                  <p className="truncate text-xs font-medium">{th.name}</p>
                 </div>
               </button>
             ))}
@@ -376,6 +410,7 @@ export function InvitationBuilder({ event }: { event: EventDetail }) {
               venueAddress: event.venueAddress,
             }}
             content={liveContent as InvitationContent}
+            theme={themeTokens}
             musicUrl={event.invitation?.musicUrl}
           />
         </div>

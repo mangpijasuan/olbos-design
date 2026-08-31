@@ -1,4 +1,5 @@
 import type { InvitationContent } from "@/validations/invitation";
+import type { ThemeTokens } from "@/validations/theme";
 
 export interface InvitationEventInfo {
   title: string;
@@ -15,6 +16,7 @@ export interface InvitationEventInfo {
 export interface InvitationTemplateProps {
   event: InvitationEventInfo;
   content: InvitationContent;
+  theme: ThemeTokens;
   musicUrl?: string | null;
   rsvpSlot?: React.ReactNode;
 }

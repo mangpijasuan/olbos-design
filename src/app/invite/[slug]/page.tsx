@@ -7,6 +7,7 @@ import { EnvelopeIntro } from "@/components/invitation/envelope-intro";
 import { getTemplateComponent } from "@/components/invitation/template-registry";
 import { EMPTY_INVITATION_CONTENT } from "@/validations/invitation";
 import type { InvitationContent } from "@/validations/invitation";
+import { themeTokensSchema, DEFAULT_THEME_TOKENS } from "@/validations/theme";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -57,6 +58,8 @@ export default async function PublicInvitationPage({ params, searchParams }: Pag
     ...EMPTY_INVITATION_CONTENT,
     ...(event.invitation?.content as Partial<InvitationContent> | undefined),
   };
+  const themeParsed = themeTokensSchema.safeParse(event.invitation?.selectedTheme?.tokens);
+  const theme = themeParsed.success ? themeParsed.data : DEFAULT_THEME_TOKENS;
   const TemplateComponent = getTemplateComponent(event.invitation?.template.key ?? "luxury");
 
   const invitationBody = (
@@ -79,6 +82,7 @@ export default async function PublicInvitationPage({ params, searchParams }: Pag
           coverImageUrl: event.coverImageUrl,
         }}
         content={content}
+        theme={theme}
         musicUrl={event.invitation?.musicUrl}
         rsvpSlot={<RsvpForm slug={slug} />}
       />

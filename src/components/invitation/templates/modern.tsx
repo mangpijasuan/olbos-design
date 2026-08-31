@@ -5,8 +5,10 @@ import { GalleryGrid } from "@/components/invitation/gallery-grid";
 import { VenueMap } from "@/components/invitation/venue-map";
 import { BackgroundEffect } from "@/components/invitation/background-effect";
 import type { InvitationTemplateProps } from "@/components/invitation/types";
+import { themeStyleVars, heroFontClass } from "@/lib/theme-tokens";
+import { cn } from "@/lib/utils";
 
-export function ModernTemplate({ event, content, rsvpSlot }: InvitationTemplateProps) {
+export function ModernTemplate({ event, content, theme, rsvpSlot }: InvitationTemplateProps) {
   const startDate = new Date(event.startAt);
   const dateLabel = startDate.toLocaleDateString("en-US", {
     weekday: "long",
@@ -16,15 +18,15 @@ export function ModernTemplate({ event, content, rsvpSlot }: InvitationTemplateP
   });
 
   return (
-    <div className="relative isolate bg-white font-sans text-neutral-900">
+    <div className="relative isolate font-sans" style={themeStyleVars(theme)}>
       <BackgroundEffect type={content.backgroundEffect} />
       <div className="relative z-10">
       <section className="grid min-h-[80vh] grid-cols-1 items-center gap-10 px-6 py-24 sm:px-12 lg:grid-cols-2">
         <div>
-          <p className="text-xs font-semibold tracking-[0.3em] text-emerald uppercase">
+          <p className="text-xs font-semibold tracking-[0.3em] text-[var(--event-primary)] uppercase">
             {dateLabel}
           </p>
-          <h1 className="mt-4 font-display text-5xl leading-[1.05] font-bold sm:text-6xl">
+          <h1 className={cn("mt-4 text-5xl leading-[1.05] sm:text-6xl", heroFontClass(theme, "font-bold"))}>
             {event.title}
           </h1>
           {content.greeting && (
@@ -32,7 +34,7 @@ export function ModernTemplate({ event, content, rsvpSlot }: InvitationTemplateP
           )}
           <CountdownTimer
             target={startDate}
-            className="mt-10 grid grid-cols-4 gap-4 border-t border-neutral-200 pt-8 text-neutral-900"
+            className="mt-10 grid grid-cols-4 gap-4 border-t border-neutral-200 pt-8 text-[var(--event-text)]"
           />
         </div>
         <div className="h-64 w-full rounded-2xl bg-[linear-gradient(135deg,var(--emerald)_0%,var(--champagne)_100%)] lg:h-96" />
@@ -88,7 +90,7 @@ export function ModernTemplate({ event, content, rsvpSlot }: InvitationTemplateP
           <div className="grid gap-8 sm:grid-cols-2">
             {content.accommodation && (
               <div>
-                <h3 className="text-sm font-semibold tracking-widest text-emerald uppercase">
+                <h3 className="text-sm font-semibold tracking-widest text-[var(--event-primary)] uppercase">
                   Accommodation
                 </h3>
                 <p className="mt-2 text-neutral-600">{content.accommodation}</p>
@@ -96,7 +98,7 @@ export function ModernTemplate({ event, content, rsvpSlot }: InvitationTemplateP
             )}
             {content.transportation && (
               <div>
-                <h3 className="text-sm font-semibold tracking-widest text-emerald uppercase">
+                <h3 className="text-sm font-semibold tracking-widest text-[var(--event-primary)] uppercase">
                   Transportation
                 </h3>
                 <p className="mt-2 text-neutral-600">{content.transportation}</p>

@@ -238,18 +238,42 @@ model Template {
   @@map("templates")
 }
 
+// A theme is a resolved set of design tokens (colors + typography pairing),
+// independent of which Template (layout) it's applied to. See OLBOS_DESIGN.md
+// 1c — this is the first step of splitting "Template" into Layout + Theme +
+// Fabric per the OLBOS DESIGN vision; Fabric (material/texture) is deferred.
+model Theme {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String
+  category    TemplateCategory
+  tokens      Json
+  swatch      String
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  invitations Invitation[]
+
+  @@index([category])
+  @@map("themes")
+}
+
 model Invitation {
   id           String   @id @default(cuid())
   eventId      String   @unique
   templateId   String
+  themeId      String
   theme        Json     @default("{}")
   content      Json     @default("{}")
   musicUrl     String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  template Template @relation(fields: [templateId], references: [id])
+  event         Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  template      Template @relation(fields: [templateId], references: [id])
+  selectedTheme Theme    @relation(fields: [themeId], references: [id])
 
   @@map("invitations")
 }

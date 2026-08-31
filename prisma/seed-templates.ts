@@ -3,6 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { TEMPLATE_DEFINITIONS } from "../src/lib/templates";
 import { EMPTY_INVITATION_CONTENT, type InvitationContent } from "../src/validations/invitation";
+import { DEFAULT_THEME_BY_TEMPLATE, FALLBACK_THEME_KEY } from "../src/lib/theme-defaults";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const db = new PrismaClient({ adapter });
@@ -194,6 +195,10 @@ async function main() {
     });
     if (!eventType) throw new Error(`Unknown event type key: ${demo.eventTypeKey}`);
 
+    const themeKey = DEFAULT_THEME_BY_TEMPLATE[demo.templateKey] ?? FALLBACK_THEME_KEY;
+    const theme = await db.theme.findUnique({ where: { key: themeKey } });
+    if (!theme) throw new Error(`Unknown theme key: ${themeKey}`);
+
     const template = await db.template.upsert({
       where: { key: templateDef.key },
       update: {
@@ -250,7 +255,13 @@ async function main() {
     await db.invitation.upsert({
       where: { eventId },
       update: { templateId: template.id, content: demo.content },
-      create: { eventId, templateId: template.id, content: demo.content, theme: {} },
+      create: {
+        eventId,
+        templateId: template.id,
+        themeId: theme.id,
+        theme: theme.tokens as object,
+        content: demo.content,
+      },
     });
 
     console.log(`${existing ? "Updated" : "Created"} demo event: /invite/${demo.slug}`);

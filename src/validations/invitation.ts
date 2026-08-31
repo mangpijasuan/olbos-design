@@ -43,6 +43,7 @@ export type BackgroundEffect = (typeof BACKGROUND_EFFECTS)[number];
 
 export const updateInvitationSchema = z.object({
   templateKey: z.string().min(1).optional(),
+  themeKey: z.string().min(1).optional(),
   content: invitationContentSchema.optional(),
   musicUrl: z.string().url().optional().or(z.literal("")).optional(),
 });

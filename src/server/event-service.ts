@@ -6,6 +6,8 @@ import { requireUser, requireEventAccess } from "@/server/auth-helpers";
 import type { CreateEventPayload, UpdateEventPayload } from "@/validations/event";
 import { getTemplateDefinition } from "@/lib/templates";
 import { EMPTY_INVITATION_CONTENT } from "@/validations/invitation";
+import { resolveTheme } from "@/server/theme-service";
+import { DEFAULT_THEME_BY_TEMPLATE, FALLBACK_THEME_KEY } from "@/lib/theme-defaults";
 
 export class EventTypeError extends Error {
   constructor(message = "Unknown event type") {
@@ -67,6 +69,9 @@ export async function createEvent(input: CreateEventPayload) {
     ensureTemplate(input.templateKey),
     resolveEventType(input.eventTypeKey),
   ]);
+  const theme = await resolveTheme(
+    DEFAULT_THEME_BY_TEMPLATE[input.templateKey] ?? FALLBACK_THEME_KEY,
+  );
 
   return db.event.create({
     data: {
@@ -82,8 +87,9 @@ export async function createEvent(input: CreateEventPayload) {
       invitation: {
         create: {
           templateId: template.id,
+          themeId: theme.id,
+          theme: theme.tokens as object,
           content: EMPTY_INVITATION_CONTENT,
-          theme: {},
         },
       },
     },
@@ -97,7 +103,7 @@ export async function getEventForOwner(eventId: string) {
     where: { id: event.id },
     include: {
       eventType: true,
-      invitation: { include: { template: true } },
+      invitation: { include: { template: true, selectedTheme: true } },
       _count: { select: { guests: true, media: true } },
     },
   });
@@ -179,6 +185,7 @@ export async function duplicateEvent(eventId: string) {
             invitation: {
               create: {
                 templateId: original.invitation.templateId,
+                themeId: original.invitation.themeId,
                 content: original.invitation.content as object,
                 theme: original.invitation.theme as object,
                 musicUrl: original.invitation.musicUrl,

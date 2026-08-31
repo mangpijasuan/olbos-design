@@ -19,7 +19,7 @@ export function TemplatesShowcase() {
         </p>
       </div>
 
-      <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
         {TEMPLATE_DEFINITIONS.map((template) => (
           <div
             key={template.key}
@@ -58,7 +58,7 @@ export function TemplatesShowcase() {
           href="/templates"
           className="group inline-flex items-center gap-1.5 text-sm font-medium text-primary"
         >
-          Browse all {TEMPLATE_DEFINITIONS.length} templates
+          Open the full template gallery
           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
         <p className="text-center text-sm text-muted-foreground">

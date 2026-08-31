@@ -1,14 +1,24 @@
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+const SIZES = {
+  md: { box: "h-14 w-14 sm:h-16 sm:w-16", text: "text-lg sm:text-xl" },
+  lg: { box: "h-24 w-24 sm:h-28 sm:w-28", text: "text-3xl sm:text-4xl" },
+};
 
 export function WaxSeal({
   initials,
   broken = false,
+  size = "md",
   className,
 }: {
   initials: string;
   broken?: boolean;
+  size?: keyof typeof SIZES;
   className?: string;
 }) {
+  const dims = SIZES[size];
+
   return (
     <motion.div
       className={className}
@@ -20,7 +30,7 @@ export function WaxSeal({
       transition={{ duration: 0.5, delay: broken ? 0.15 : 0, ease: "easeIn" }}
     >
       <div
-        className="relative flex h-14 w-14 items-center justify-center rounded-full sm:h-16 sm:w-16"
+        className={cn("relative flex items-center justify-center rounded-full", dims.box)}
         style={{
           background:
             "radial-gradient(circle at 35% 30%, #f0d896 0%, #c9a45f 45%, #8a6420 90%)",
@@ -34,7 +44,7 @@ export function WaxSeal({
           aria-hidden
         />
         <span
-          className="font-script text-lg text-[#3c2a0e] sm:text-xl"
+          className={cn("font-script text-[#3c2a0e]", dims.text)}
           style={{ textShadow: "0 1px 0 rgba(255,255,255,0.3)" }}
         >
           {initials || "✳"}

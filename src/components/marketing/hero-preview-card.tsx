@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FloralFlourish } from "@/components/invitation/floral-flourish";
+import { EnvelopeWallpaper } from "@/components/invitation/envelope-wallpaper";
 import { WaxSeal } from "@/components/invitation/wax-seal";
 
 export function HeroPreviewCard() {
@@ -26,15 +27,31 @@ export function HeroPreviewCard() {
             background: "linear-gradient(160deg, #fbf6ea 0%, #f3e9d2 60%, #ecdfbe 100%)",
           }}
         >
+          <EnvelopeWallpaper className="absolute inset-0 h-full w-full" />
+          <div
+            aria-hidden
+            className="absolute inset-x-0 bottom-0 h-2/3"
+            style={{
+              background:
+                "radial-gradient(ellipse 75% 65% at 50% 100%, rgba(201,164,95,0.35), transparent 70%)",
+            }}
+          />
           <FloralFlourish
             className="absolute right-3 bottom-3 h-16 w-16 opacity-70"
             flip
           />
           <FloralFlourish className="absolute bottom-3 left-3 h-14 w-14 rotate-180 opacity-50" />
+          <FloralFlourish
+            className="absolute top-[24%] left-1/2 z-10 h-14 w-14 -translate-x-[85%] -translate-y-1/2 rotate-[200deg] opacity-80"
+          />
+          <FloralFlourish
+            flip
+            className="absolute top-[24%] left-1/2 z-10 h-14 w-14 translate-x-[-15%] -translate-y-1/2 rotate-[160deg] opacity-70"
+          />
 
-          <div className="flex h-full flex-col items-center justify-center px-6 text-center">
+          <div className="absolute inset-x-0 top-[46%] bottom-0 z-10 flex flex-col items-center justify-between gap-2 px-4 pt-2 pb-6 text-center">
             <p className="font-script text-xl text-[#6b4a1f]">Grace &amp; Daniel</p>
-            <p className="mt-2 text-[10px] tracking-[0.3em] text-[#8a6a34]/80 uppercase">
+            <p className="mt-auto text-[10px] tracking-[0.3em] text-[#8a6a34]/80 uppercase">
               {isOpen ? "You're invited" : "Tap to open"}
             </p>
           </div>
@@ -57,7 +74,8 @@ export function HeroPreviewCard() {
           <WaxSeal
             initials="G&D"
             broken={isOpen}
-            className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
+            size="lg"
+            className="absolute top-[24%] left-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
           />
         </div>
       </div>

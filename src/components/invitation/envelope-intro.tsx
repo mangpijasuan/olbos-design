@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FloralFlourish } from "@/components/invitation/floral-flourish";
+import { EnvelopeWallpaper } from "@/components/invitation/envelope-wallpaper";
 import { WaxSeal } from "@/components/invitation/wax-seal";
 
 function initialsFrom(text: string) {
@@ -75,21 +76,38 @@ export function EnvelopeIntro({
                   background: "linear-gradient(160deg, #fbf6ea 0%, #f3e9d2 60%, #ecdfbe 100%)",
                 }}
               />
+              <EnvelopeWallpaper className="absolute inset-0 h-full w-full" />
+              <div
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 h-2/3"
+                style={{
+                  background:
+                    "radial-gradient(ellipse 75% 65% at 50% 100%, rgba(201,164,95,0.4), transparent 70%)",
+                }}
+              />
               <FloralFlourish
                 className="absolute right-2 bottom-2 h-16 w-16 opacity-70 sm:h-20 sm:w-20"
                 flip
               />
               <FloralFlourish className="absolute bottom-2 left-2 h-14 w-14 rotate-180 opacity-50 sm:h-16 sm:w-16" />
+              <FloralFlourish
+                className="absolute top-[26%] left-1/2 z-10 h-16 w-16 -translate-x-[85%] -translate-y-1/2 rotate-[200deg] opacity-80 sm:h-20 sm:w-20"
+              />
+              <FloralFlourish
+                flip
+                className="absolute top-[26%] left-1/2 z-10 h-16 w-16 translate-x-[-15%] -translate-y-1/2 rotate-[160deg] opacity-70 sm:h-20 sm:w-20"
+              />
 
-              {greeting && (
-                <p className="relative z-10 mt-auto mb-14 max-w-[85%] px-4 text-center font-script text-lg text-[#6b4a1f] italic sm:text-xl">
-                  {greeting}
-                </p>
-              )}
-
-              <span className="relative z-10 mt-auto mb-6 text-[10px] tracking-[0.3em] text-[#8a6a34]/80 uppercase">
-                {isOpening ? "Opening…" : "Tap to open"}
-              </span>
+              <div className="absolute inset-x-0 top-[48%] bottom-0 z-10 flex flex-col items-center justify-between gap-2 px-4 pt-2 pb-6 text-center">
+                {greeting && (
+                  <p className="max-w-[85%] font-script text-base text-[#6b4a1f] italic sm:text-lg">
+                    {greeting}
+                  </p>
+                )}
+                <span className="mt-auto text-[10px] tracking-[0.3em] text-[#8a6a34]/80 uppercase">
+                  {isOpening ? "Opening…" : "Tap to open"}
+                </span>
+              </div>
 
               {/* flap */}
               <motion.div
@@ -113,7 +131,8 @@ export function EnvelopeIntro({
               <WaxSeal
                 initials={initials}
                 broken={isOpening}
-                className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
+                size="lg"
+                className="absolute top-[26%] left-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
               />
             </button>
           </motion.div>

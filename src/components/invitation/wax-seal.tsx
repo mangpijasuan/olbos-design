@@ -43,6 +43,31 @@ export function WaxSeal({
           style={{ border: "1px solid rgba(255,255,255,0.25)" }}
           aria-hidden
         />
+        {/* embossed rose-sprig ring, evoking a relief pressed into the wax */}
+        <svg
+          viewBox="0 0 100 100"
+          className="pointer-events-none absolute inset-0 h-full w-full"
+          aria-hidden
+        >
+          {Array.from({ length: 8 }).map((_, i) => {
+            const angle = (i / 8) * Math.PI * 2 - Math.PI / 2;
+            const cx = 50 + Math.cos(angle) * 34;
+            const cy = 50 + Math.sin(angle) * 34;
+            const rot = (angle * 180) / Math.PI + 90;
+            return (
+              <ellipse
+                key={i}
+                cx={cx}
+                cy={cy}
+                rx="2.4"
+                ry="5"
+                fill="rgba(60,42,14,0.22)"
+                transform={`rotate(${rot} ${cx} ${cy})`}
+              />
+            );
+          })}
+          <circle cx="50" cy="50" r="16" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="0.6" />
+        </svg>
         <span
           className={cn("font-script text-[#3c2a0e]", dims.text)}
           style={{ textShadow: "0 1px 0 rgba(255,255,255,0.3)" }}

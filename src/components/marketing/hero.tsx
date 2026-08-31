@@ -38,7 +38,9 @@ export function Hero() {
             className="font-display text-4xl leading-tight font-semibold sm:text-6xl"
           >
             Invitations as special as the moment itself, designed to{" "}
-            <span className="font-script text-gradient-gold text-5xl sm:text-7xl">impress</span>
+            <span className="font-script text-gradient-gold text-5xl sm:text-7xl">
+              be remembered
+            </span>
           </motion.h1>
 
           <motion.p

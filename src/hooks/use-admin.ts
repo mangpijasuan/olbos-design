@@ -14,7 +14,7 @@ interface AdminUser {
 interface AdminEvent {
   id: string;
   title: string;
-  type: string;
+  eventType: { key: string; label: string; category: string };
   status: string;
   startAt: string;
   host: { name: string; email: string };

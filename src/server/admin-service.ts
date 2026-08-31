@@ -18,6 +18,7 @@ export async function listAllEventsForAdmin() {
     take: 200,
     include: {
       host: { select: { name: true, email: true } },
+      eventType: true,
       _count: { select: { guests: true } },
     },
   });

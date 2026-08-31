@@ -43,7 +43,7 @@ describe("createEventSchema", () => {
   it("accepts a valid event", () => {
     const result = createEventSchema.safeParse({
       title: "Amara & Kofi's Wedding",
-      type: "WEDDING",
+      eventTypeKey: "WEDDING",
       startAt: new Date().toISOString(),
     });
     expect(result.success).toBe(true);
@@ -52,16 +52,19 @@ describe("createEventSchema", () => {
   it("rejects a title that is too short", () => {
     const result = createEventSchema.safeParse({
       title: "Hi",
-      type: "WEDDING",
+      eventTypeKey: "WEDDING",
       startAt: new Date().toISOString(),
     });
     expect(result.success).toBe(false);
   });
 
-  it("rejects an unknown event type", () => {
+  it("rejects an empty event type key", () => {
+    // The registry itself (not Zod) is the source of truth for which keys
+    // are real — resolveEventType() in event-service.ts rejects unknown
+    // keys against the database. This schema only enforces non-empty.
     const result = createEventSchema.safeParse({
       title: "Valid Title",
-      type: "RAVE",
+      eventTypeKey: "",
       startAt: new Date().toISOString(),
     });
     expect(result.success).toBe(false);
@@ -70,7 +73,7 @@ describe("createEventSchema", () => {
   it("defaults the template key to luxury when omitted", () => {
     const result = createEventSchema.safeParse({
       title: "Valid Title",
-      type: "BIRTHDAY",
+      eventTypeKey: "BIRTHDAY",
       startAt: new Date().toISOString(),
     });
     expect(result.success).toBe(true);

@@ -3,11 +3,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CreateEventInput, UpdateEventInput } from "@/validations/event";
 
+export interface EventTypeRef {
+  id: string;
+  key: string;
+  label: string;
+  category: string;
+}
+
 export interface EventSummary {
   id: string;
   slug: string;
   title: string;
-  type: string;
+  eventType: EventTypeRef;
   status: string;
   visibility: string;
   startAt: string;

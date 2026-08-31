@@ -4,19 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { createEventSchema, EVENT_TYPES, type CreateEventInput } from "@/validations/event";
+import { createEventSchema, type CreateEventInput } from "@/validations/event";
 import { TEMPLATE_DEFINITIONS } from "@/lib/templates";
-import { titleCase } from "@/lib/format";
 import { useCreateEvent } from "@/hooks/use-events";
+import { EventTypeSelect } from "@/components/dashboard/event-type-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -46,7 +39,7 @@ export function CreateEventForm() {
     resolver: zodResolver(createEventSchema),
     defaultValues: {
       title: "",
-      type: "WEDDING",
+      eventTypeKey: "WEDDING",
       startAt: defaultStart,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       venueName: "",
@@ -84,24 +77,11 @@ export function CreateEventForm() {
 
         <FormField
           control={form.control}
-          name="type"
+          name="eventTypeKey"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Event type</FormLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {EVENT_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {titleCase(type)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <EventTypeSelect value={field.value} onChange={field.onChange} />
               <FormMessage />
             </FormItem>
           )}

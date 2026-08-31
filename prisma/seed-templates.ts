@@ -9,27 +9,11 @@ const db = new PrismaClient({ adapter });
 
 const DEMO_HOST_EMAIL = "demo@olbosevent.com";
 
-type EventType =
-  | "WEDDING"
-  | "BIRTHDAY"
-  | "CONFERENCE"
-  | "CORPORATE"
-  | "GRADUATION"
-  | "BABY_SHOWER"
-  | "CHURCH"
-  | "MEMORIAL"
-  | "FESTIVAL"
-  | "FUNDRAISER"
-  | "NETWORKING"
-  | "HOLIDAY_PARTY"
-  | "COMMUNITY_EVENT"
-  | "CUSTOM";
-
 type DemoEvent = {
   templateKey: string;
   slug: string;
   title: string;
-  type: EventType;
+  eventTypeKey: string;
   startAt: Date;
   venueName: string;
   venueAddress: string;
@@ -49,7 +33,7 @@ const DEMOS: DemoEvent[] = [
     templateKey: "luxury",
     slug: "demo-luxury",
     title: "Amara & Julian's Wedding",
-    type: "WEDDING",
+    eventTypeKey: "WEDDING",
     startAt: new Date("2026-10-17T22:00:00Z"),
     venueName: "The Wildflower Conservatory",
     venueAddress: "482 Botanical Way, Austin, TX",
@@ -83,7 +67,7 @@ const DEMOS: DemoEvent[] = [
     templateKey: "modern",
     slug: "demo-modern",
     title: "Meridian Design Summit 2026",
-    type: "CONFERENCE",
+    eventTypeKey: "CONFERENCE",
     startAt: new Date("2026-11-04T17:00:00Z"),
     venueName: "Meridian Convention Hall",
     venueAddress: "1200 Harbor Blvd, San Francisco, CA",
@@ -110,7 +94,7 @@ const DEMOS: DemoEvent[] = [
     templateKey: "floral",
     slug: "demo-floral",
     title: "Priya & Diego's Garden Wedding",
-    type: "WEDDING",
+    eventTypeKey: "WEDDING",
     startAt: new Date("2026-09-12T23:00:00Z"),
     venueName: "Rosewood Garden Estate",
     venueAddress: "77 Blossom Hill Road, Portland, OR",
@@ -142,7 +126,7 @@ const DEMOS: DemoEvent[] = [
     templateKey: "minimal",
     slug: "demo-minimal",
     title: "Ella's 30th Birthday",
-    type: "BIRTHDAY",
+    eventTypeKey: "BIRTHDAY",
     startAt: new Date("2026-09-26T23:00:00Z"),
     venueName: "The Green Room",
     venueAddress: "515 Pine Street, Seattle, WA",
@@ -166,7 +150,7 @@ const DEMOS: DemoEvent[] = [
     templateKey: "navy",
     slug: "demo-navy",
     title: "Sterling Charity Gala",
-    type: "FUNDRAISER",
+    eventTypeKey: "FUNDRAISER",
     startAt: new Date("2026-12-06T00:30:00Z"),
     venueName: "The Sterling Ballroom",
     venueAddress: "900 Fifth Avenue, New York, NY",
@@ -205,6 +189,11 @@ async function main() {
     const templateDef = TEMPLATE_DEFINITIONS.find((t) => t.key === demo.templateKey);
     if (!templateDef) throw new Error(`Unknown template key: ${demo.templateKey}`);
 
+    const eventType = await db.eventTypeDefinition.findUnique({
+      where: { key: demo.eventTypeKey },
+    });
+    if (!eventType) throw new Error(`Unknown event type key: ${demo.eventTypeKey}`);
+
     const template = await db.template.upsert({
       where: { key: templateDef.key },
       update: {
@@ -231,7 +220,7 @@ async function main() {
             data: {
               hostId: host.id,
               title: demo.title,
-              type: demo.type,
+              eventTypeId: eventType.id,
               status: "PUBLISHED",
               visibility: "PUBLIC",
               startAt: demo.startAt,
@@ -246,7 +235,7 @@ async function main() {
             data: {
               hostId: host.id,
               title: demo.title,
-              type: demo.type,
+              eventTypeId: eventType.id,
               status: "PUBLISHED",
               visibility: "PUBLIC",
               slug: demo.slug,

@@ -6,10 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Copy, ExternalLink, QrCode, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { updateEventSchema, EVENT_TYPES, EVENT_VISIBILITIES, type UpdateEventInput } from "@/validations/event";
+import { updateEventSchema, EVENT_VISIBILITIES, type UpdateEventInput } from "@/validations/event";
 import { titleCase } from "@/lib/format";
 import { useDeleteEvent, useUpdateEvent, type EventDetail } from "@/hooks/use-events";
 import { InviteQr } from "@/components/dashboard/invite-qr";
+import { EventTypeSelect } from "@/components/dashboard/event-type-select";
 import { ShareButtons } from "@/components/invitation/share-buttons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,7 +41,7 @@ export function EventOverview({ event }: { event: EventDetail }) {
     resolver: zodResolver(updateEventSchema),
     defaultValues: {
       title: event.title,
-      type: event.type as UpdateEventInput["type"],
+      eventTypeKey: event.eventType.key,
       venueName: event.venueName ?? "",
       venueAddress: event.venueAddress ?? "",
       visibility: event.visibility as UpdateEventInput["visibility"],
@@ -50,7 +51,7 @@ export function EventOverview({ event }: { event: EventDetail }) {
   useEffect(() => {
     form.reset({
       title: event.title,
-      type: event.type as UpdateEventInput["type"],
+      eventTypeKey: event.eventType.key,
       venueName: event.venueName ?? "",
       venueAddress: event.venueAddress ?? "",
       visibility: event.visibility as UpdateEventInput["visibility"],
@@ -91,24 +92,11 @@ export function EventOverview({ event }: { event: EventDetail }) {
 
           <FormField
             control={form.control}
-            name="type"
+            name="eventTypeKey"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Event type</FormLabel>
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {EVENT_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {titleCase(type)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <EventTypeSelect value={field.value} onChange={field.onChange} />
                 <FormMessage />
               </FormItem>
             )}

@@ -47,7 +47,7 @@ export function EventCard({ event }: EventCardProps) {
             <h3 className="font-display text-lg font-semibold hover:underline">{event.title}</h3>
           </Link>
           <p className="mt-1 text-xs tracking-wide text-muted-foreground uppercase">
-            {titleCase(event.type)}
+            {event.eventType.label}
           </p>
         </div>
 

@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { UnauthorizedError, ForbiddenError } from "@/server/auth-helpers";
 import { CheckInError } from "@/server/checkin-service";
 import { BillingError } from "@/server/billing-service";
+import { EventTypeError } from "@/server/event-service";
 
 export function handleApiError(error: unknown) {
   if (error instanceof UnauthorizedError) {
@@ -15,6 +16,9 @@ export function handleApiError(error: unknown) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
   if (error instanceof BillingError) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+  if (error instanceof EventTypeError) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
   if (error instanceof ZodError) {

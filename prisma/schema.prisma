@@ -135,23 +135,6 @@ model Membership {
 // Events + Invitations
 // ─────────────────────────────────────────────────────────────────────────
 
-enum EventType {
-  WEDDING
-  BIRTHDAY
-  CONFERENCE
-  CORPORATE
-  GRADUATION
-  BABY_SHOWER
-  CHURCH
-  MEMORIAL
-  FESTIVAL
-  FUNDRAISER
-  NETWORKING
-  HOLIDAY_PARTY
-  COMMUNITY_EVENT
-  CUSTOM
-}
-
 enum EventStatus {
   DRAFT
   PUBLISHED
@@ -164,11 +147,37 @@ enum EventVisibility {
   PASSWORD_PROTECTED
 }
 
+// New event types are data (rows here), never a schema change — per the
+// OLBOS DESIGN vision's explicit "never hard-code event types" rule.
+enum EventCategory {
+  LIFE_FAMILY
+  CHURCH_FAITH
+  EDUCATION
+  BUSINESS
+  SOCIAL
+  CUSTOM
+}
+
+model EventTypeDefinition {
+  id        String        @id @default(cuid())
+  key       String        @unique
+  label     String
+  category  EventCategory
+  sortOrder Int           @default(0)
+  isActive  Boolean       @default(true)
+  createdAt DateTime      @default(now())
+
+  events Event[]
+
+  @@index([category])
+  @@map("event_types")
+}
+
 model Event {
   id             String          @id @default(cuid())
   organizationId String?
   hostId         String
-  type           EventType
+  eventTypeId    String
   status         EventStatus     @default(DRAFT)
   visibility     EventVisibility @default(PRIVATE)
   passwordHash   String?
@@ -185,8 +194,9 @@ model Event {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
-  organization    Organization?    @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  host            User             @relation("EventHost", fields: [hostId], references: [id], onDelete: Cascade)
+  organization    Organization?       @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  host            User                @relation("EventHost", fields: [hostId], references: [id], onDelete: Cascade)
+  eventType       EventTypeDefinition @relation(fields: [eventTypeId], references: [id])
   invitation      Invitation?
   guests          Guest[]
   guestGroups     GuestGroup[]
@@ -196,6 +206,7 @@ model Event {
 
   @@index([hostId])
   @@index([organizationId])
+  @@index([eventTypeId])
   @@map("events")
 }
 

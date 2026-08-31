@@ -1,27 +1,10 @@
 import { z } from "zod";
 
-export const EVENT_TYPES = [
-  "WEDDING",
-  "BIRTHDAY",
-  "CONFERENCE",
-  "CORPORATE",
-  "GRADUATION",
-  "BABY_SHOWER",
-  "CHURCH",
-  "MEMORIAL",
-  "FESTIVAL",
-  "FUNDRAISER",
-  "NETWORKING",
-  "HOLIDAY_PARTY",
-  "COMMUNITY_EVENT",
-  "CUSTOM",
-] as const;
-
 export const EVENT_VISIBILITIES = ["PUBLIC", "PRIVATE", "PASSWORD_PROTECTED"] as const;
 
 export const createEventSchema = z.object({
   title: z.string().min(3, "Give your event a title").max(160),
-  type: z.enum(EVENT_TYPES),
+  eventTypeKey: z.string().min(1, "Choose an event type").max(64),
   startAt: z.coerce.date(),
   endAt: z.coerce.date().optional().nullable(),
   timezone: z.string().default("UTC"),
@@ -35,7 +18,7 @@ export type CreateEventPayload = z.output<typeof createEventSchema>;
 
 export const updateEventSchema = z.object({
   title: z.string().min(3).max(160).optional(),
-  type: z.enum(EVENT_TYPES).optional(),
+  eventTypeKey: z.string().min(1).max(64).optional(),
   startAt: z.coerce.date().optional(),
   endAt: z.coerce.date().optional().nullable(),
   timezone: z.string().optional(),

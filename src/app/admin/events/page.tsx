@@ -52,7 +52,7 @@ export default function AdminEventsPage() {
                     <div>{event.host.name}</div>
                     <div className="text-xs text-muted-foreground">{event.host.email}</div>
                   </TableCell>
-                  <TableCell>{titleCase(event.type)}</TableCell>
+                  <TableCell>{event.eventType.label}</TableCell>
                   <TableCell>
                     <Badge variant={STATUS_VARIANT[event.status]}>{titleCase(event.status)}</Badge>
                   </TableCell>

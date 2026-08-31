@@ -14,6 +14,7 @@ async function loadEvent(slug: string) {
   return db.event.findUnique({
     where: { slug },
     include: {
+      eventType: true,
       invitation: { include: { template: true } },
       media: { orderBy: { sortOrder: "asc" } },
     },

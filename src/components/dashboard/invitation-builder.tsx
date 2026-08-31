@@ -369,7 +369,7 @@ export function InvitationBuilder({ event }: { event: EventDetail }) {
           <PreviewComponent
             event={{
               title: event.title,
-              type: event.type,
+              type: event.eventType.key,
               startAt: event.startAt,
               endAt: event.endAt,
               venueName: event.venueName,

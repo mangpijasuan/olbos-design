@@ -7,6 +7,13 @@ import type { CreateEventPayload, UpdateEventPayload } from "@/validations/event
 import { getTemplateDefinition } from "@/lib/templates";
 import { EMPTY_INVITATION_CONTENT } from "@/validations/invitation";
 
+export class EventTypeError extends Error {
+  constructor(message = "Unknown event type") {
+    super(message);
+    this.name = "EventTypeError";
+  }
+}
+
 async function ensureTemplate(key: string) {
   const def = getTemplateDefinition(key);
   return db.template.upsert({
@@ -20,6 +27,15 @@ async function ensureTemplate(key: string) {
       previewImage: def.swatch,
     },
   });
+}
+
+// Unlike ensureTemplate, event types are pure reference data (seeded via
+// prisma/seed-event-types.ts) — an unknown key is a real validation error,
+// not something to silently create.
+async function resolveEventType(key: string) {
+  const eventType = await db.eventTypeDefinition.findUnique({ where: { key } });
+  if (!eventType) throw new EventTypeError(`Unknown event type: ${key}`);
+  return eventType;
 }
 
 async function generateUniqueSlug(title: string) {
@@ -38,6 +54,7 @@ export async function listMyEvents() {
     where: { hostId: user.id },
     orderBy: { startAt: "desc" },
     include: {
+      eventType: true,
       _count: { select: { guests: true } },
     },
   });
@@ -46,13 +63,16 @@ export async function listMyEvents() {
 export async function createEvent(input: CreateEventPayload) {
   const user = await requireUser();
   const slug = await generateUniqueSlug(input.title);
-  const template = await ensureTemplate(input.templateKey);
+  const [template, eventType] = await Promise.all([
+    ensureTemplate(input.templateKey),
+    resolveEventType(input.eventTypeKey),
+  ]);
 
   return db.event.create({
     data: {
       hostId: user.id,
       title: input.title,
-      type: input.type,
+      eventTypeId: eventType.id,
       slug,
       startAt: input.startAt,
       endAt: input.endAt ?? null,
@@ -67,7 +87,7 @@ export async function createEvent(input: CreateEventPayload) {
         },
       },
     },
-    include: { invitation: true },
+    include: { invitation: true, eventType: true },
   });
 }
 
@@ -76,6 +96,7 @@ export async function getEventForOwner(eventId: string) {
   return db.event.findUniqueOrThrow({
     where: { id: event.id },
     include: {
+      eventType: true,
       invitation: { include: { template: true } },
       _count: { select: { guests: true, media: true } },
     },
@@ -89,12 +110,15 @@ export async function updateEvent(eventId: string, input: UpdateEventPayload) {
     input.visibility === "PASSWORD_PROTECTED" && input.password
       ? hashPassword(input.password)
       : undefined;
+  const eventTypeId = input.eventTypeKey
+    ? (await resolveEventType(input.eventTypeKey)).id
+    : undefined;
 
   return db.event.update({
     where: { id: event.id },
     data: {
       title: input.title,
-      type: input.type,
+      eventTypeId,
       startAt: input.startAt,
       endAt: input.endAt,
       timezone: input.timezone,
@@ -106,6 +130,7 @@ export async function updateEvent(eventId: string, input: UpdateEventPayload) {
       visibility: input.visibility,
       ...(passwordHash ? { passwordHash } : {}),
     },
+    include: { eventType: true },
   });
 }
 
@@ -138,7 +163,7 @@ export async function duplicateEvent(eventId: string) {
       hostId: original.hostId,
       organizationId: original.organizationId,
       title: `${original.title} (Copy)`,
-      type: original.type,
+      eventTypeId: original.eventTypeId,
       slug,
       startAt: original.startAt,
       endAt: original.endAt,
